@@ -11,6 +11,7 @@
   "usingComponents": {
     "van-button": "@vant/weapp/dist/button/index",
     "van-popup": "@vant/weapp/dist/popup/index",
-    "van-icon": "@vant/weapp/dist/icon/index"
+    "van-icon": "@vant/weapp/dist/icon/index",
+    "van-dialog": "@vant/weapp/dist/dialog/index"
   }
 }
