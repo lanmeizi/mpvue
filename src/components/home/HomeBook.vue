@@ -93,7 +93,7 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.bookData)
+    console.log(this.bookData)
   },
   methods: {
     onMoreClick() {
