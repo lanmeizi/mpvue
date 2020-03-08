@@ -3,8 +3,9 @@
     <SearchBar
       :disabled="true"
       @onClick="onSearchBarkClick"
+      :hot-search="hotSearch"
     />
-    <HomeCard />
+    <HomeCard :data="homeCard" />
     <HomeBanner
       img="http://img5.imgtn.bdimg.com/it/u=3163535228,1008947289&fm=26&gp=0.jpg"
       title="mpvue2.0实战多端小程序练习学习课程"
@@ -13,12 +14,48 @@
     />
     <div class="homeBook">
       <HomeBook
-        title="分类查询"
+        title="为你推荐"
+        :row="1"
+        :col="3"
+        :data="recommend"
+        mode="col"
+        btn-text="换一批"
+        @onMoreClick="onBookMoreClick"
+        @onBookClick="onHomeBookClick"
+      />
+    </div>
+    <div class="homeBook">
+      <HomeBook
+        title="免费阅读"
         :row="2"
         :col="2"
-        :data="data"
+        :data="hotBook"
+        mode="col"
+        btn-text="换一批"
+        @onMoreClick="onBookMoreClick"
+        @onBookClick="onHomeBookClick"
+      />
+    </div>
+    <div class="homeBook">
+      <HomeBook
+        title="当前最热"
+        :row="1"
+        :col="4"
+        :data="freeRead"
+        mode="col"
+        btn-text="换一批"
+        @onMoreClick="onBookMoreClick"
+        @onBookClick="onHomeBookClick"
+      />
+    </div>
+    <div class="homeBook">
+      <HomeBook
+        title="分类"
+        :row="3"
+        :col="2"
+        :data="category"
         mode="category"
-        btn-text="更多"
+        btn-text="查看全部"
         @onMoreClick="onBookMoreClick"
         @onBookClick="onHomeBookClick"
       />
@@ -42,155 +79,17 @@ import SearchBar from '../../components/home/SearchBar'
 import HomeCard from '../../components/home/HomeCard'
 import HomeBanner from '../../components/home/HomeBanner'
 import HomeBook from '../../components/home/HomeBook'
+import { getHomeData } from '../../api'
 export default {
   data() {
     return {
-      // data: [
-      //   {
-      //     'id': 55,
-      //     'fileName': '2018',
-      //     'cover': 'http://img1.imgtn.bdimg.com/it/u=1250461792,3663661297&fm=26&gp=0.jpg',
-      //     'title': '语文书的图片大全唯美书的图片大全唯美书的图片大全唯美',
-      //     'author': '高尔基',
-      //     'publisher': 'Spring',
-      //     'bookId': '2018_Book_Drink',
-      //     'category': 8,
-      //     'categoryText': 'Geography',
-      //     'language': 'en',
-      //     'rootFile': 'OEBPS/package.opf'
-      //   },
-      //   {
-      //     'id': 57,
-      //     'fileName': '2019',
-      //     'cover': 'http://img1.imgtn.bdimg.com/it/u=1250461792,3663661297&fm=26&gp=0.jpg',
-      //     'title': '语文书的图片大全唯美书的图片大全唯美',
-      //     'author': '高尔基',
-      //     'publisher': 'Spring',
-      //     'bookId': '2018_Book_Drink',
-      //     'category': 8,
-      //     'categoryText': 'Geography',
-      //     'language': 'en',
-      //     'rootFile': 'OEBPS/package.opf'
-      //   },
-      //   {
-      //     'id': 56,
-      //     'fileName': '2010',
-      //     'cover': 'http://img1.imgtn.bdimg.com/it/u=1250461792,3663661297&fm=26&gp=0.jpg',
-      //     'title': '语文书的图片大全唯美书的图片大全唯美书的图片大全唯美书的图片大全唯美',
-      //     'author': '高尔基',
-      //     'publisher': 'Spring',
-      //     'bookId': '2018_Book_Drink',
-      //     'category': 8,
-      //     'categoryText': 'Geography',
-      //     'language': 'en',
-      //     'rootFile': 'OEBPS/package.opf'
-      //   },
-      //   {
-      //     'id': 59,
-      //     'fileName': '2011',
-      //     'cover': 'http://img1.imgtn.bdimg.com/it/u=1250461792,3663661297&fm=26&gp=0.jpg',
-      //     'title': '语文mpvue2.0实战多端小程序练习学习课程',
-      //     'author': '高尔基',
-      //     'publisher': 'Spring',
-      //     'bookId': '2018_Book_Drink',
-      //     'category': 8,
-      //     'categoryText': 'Geography',
-      //     'language': 'en',
-      //     'rootFile': 'OEBPS/package.opf'
-      //   },
-      //   {
-      //     'id': 58,
-      //     'fileName': '2012',
-      //     'cover': 'http://img1.imgtn.bdimg.com/it/u=1250461792,3663661297&fm=26&gp=0.jpg',
-      //     'title': '语文',
-      //     'author': '高尔基',
-      //     'publisher': 'Spring',
-      //     'bookId': '2018_Book_Drink',
-      //     'category': 8,
-      //     'categoryText': 'Geography',
-      //     'language': 'en',
-      //     'rootFile': 'OEBPS/package.opf'
-      //   }
-      // ],
-      data: [
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 11,
-          'categoryText': 'SocialSciences',
-          'num': 60,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 10,
-          'categoryText': 'SocialSciences',
-          'num': 59,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 9,
-          'categoryText': 'SocialSciences',
-          'num': 58,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 8,
-          'categoryText': 'SocialSciences',
-          'num': 57,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 7,
-          'categoryText': 'SocialSciences',
-          'num': 55,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 6,
-          'categoryText': 'SocialSciences',
-          'num': 56,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 5,
-          'categoryText': 'SocialSciences',
-          'num': 54,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 4,
-          'categoryText': 'SocialSciences',
-          'num': 53,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 3,
-          'categoryText': 'SocialSciences',
-          'num': 52,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 2,
-          'categoryText': 'SocialSciences',
-          'num': 51,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        },
-        {
-          'cover': 'http://img4.imgtn.bdimg.com/it/u=3829859946,843334970&fm=26&gp=0.jpg',
-          'category': 1,
-          'categoryText': 'SocialSciences',
-          'num': 50,
-          'cover2': 'http://img2.imgtn.bdimg.com/it/u=2833846593,2444749473&fm=26&gp=0.jpg'
-        }
-      ]
+      hotSearch: '',
+      banner: {},
+      recommend: [],
+      freeRead: [],
+      hotBook: [],
+      category: [],
+      homeCard: {}
     }
   },
   components: {
@@ -199,7 +98,44 @@ export default {
     HomeBanner,
     HomeBook
   },
+  mounted() {
+    this.getHomeData()
+  },
   methods: {
+    getHomeData() {
+      getHomeData({ openId: '1234' }).then(response => {
+        const {
+          data: {
+            hotSearch: {
+              keyword
+            },
+            shelf,
+            shelfCount,
+            banner,
+            recommend,
+            freeRead,
+            hotBook,
+            category
+          }
+        } = response.data
+        this.hotSearch = keyword
+        this.banner = banner
+        this.recommend = recommend
+        this.freeRead = freeRead
+        this.hotBook = hotBook
+        this.category = category
+        this.homeCard = {
+          bookList: shelf,
+          num: shelfCount,
+          userInfo: {
+            avater: 'http://img0.imgtn.bdimg.com/it/u=1972224372,2850391150&fm=26&gp=0.jpg',
+            nickname: '米老鼠'
+          }
+        }
+      }).catch(err => {
+        console.log('捕获异常', err)
+      })
+    },
     onSearchBarkClick() {
       // 跳转到搜索页面
     },

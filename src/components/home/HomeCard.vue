@@ -3,32 +3,17 @@
     <div class="home-card-inner">
       <div class="user-info">
         <div class="avatar-wrapper">
-          <ImageView
-            src="http://img0.imgtn.bdimg.com/it/u=1972224372,2850391150&fm=26&gp=0.jpg"
-            round
-          />
+          <ImageView :src="avater" round />
         </div>
-        <div class="nickname">{{ '米老鼠' }}</div>
-        <div class="shelf-text">书架共有{{ 3 }}本好书</div>
+        <div class="nickname">{{ nickname }}</div>
+        <div class="shelf-text">书架共有{{ data.num }}本好书</div>
         <div class="round-item"></div>
         <div class="shelf-text">特别精选</div>
       </div>
       <div class="book-info">
         <div class="book-wrapper">
-          <div class="book-img-wrapper">
-            <ImageView
-              src="http://img4.imgtn.bdimg.com/it/u=1983810666,1489705894&fm=26&gp=0.jpg"
-            />
-          </div>
-          <div class="book-img-wrapper">
-            <ImageView
-              src="http://img4.imgtn.bdimg.com/it/u=2828467515,1881403397&fm=26&gp=0.jpg"
-            />
-          </div>
-          <div class="book-img-wrapper">
-            <ImageView
-              src="http://img3.imgtn.bdimg.com/it/u=1460691311,220843696&fm=26&gp=0.jpg"
-            />
+          <div class="book-img-wrapper" v-for="(item, index) in bookList" :key="index" @click="onBookClick">
+            <ImageView :src="item.cover" />
           </div>
         </div>
         <div class="shelf-wrapper">
@@ -65,7 +50,23 @@ export default {
   components: {
     ImageView
   },
+  computed: { // 请求时异步的
+    avater() {
+      return this.data && this.data.userInfo && this.data.userInfo.avater
+    },
+    nickname() {
+      return this.data && this.data.userInfo && this.data.userInfo.nickname
+    },
+    bookList() {
+      return (this.data && this.data.bookList) || []
+    }
+  },
   methods: {
+    gotoShelf() {},
+    onBookClick() {
+      this.$emit('onClick')
+    },
+    sign() {},
     onFeedBacClick() {
       Dialog.confirm({
         title: '反馈',

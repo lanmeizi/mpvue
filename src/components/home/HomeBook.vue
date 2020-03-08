@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="category-wrapper" v-else>
-            <div class="category-text">{{ book.categoryText }}</div>
+            <div class="category-text">{{ book.text }}</div>
             <div class="category-num">{{ book.num }}本书</div>
             <div class="category-img-wrapper">
               <div class="category-img1">
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { HOME_BOOK_MODE } from '@/utils/const'
+import { HOME_BOOK_MODE, CATEGORY } from '@/utils/const'
 import ImageView from '../../components/base/ImageView'
 export default {
   props: {
@@ -91,6 +91,9 @@ export default {
     bookData() {
       const { data, row, col } = this
       if (data && data.length > 0) {
+        data.forEach(book => {
+          book.text = CATEGORY[book.categoryText.toLowerCase()]
+        })
         const number = row * col
         const _bookData = data.slice(0, number)
         const _bookDataRow = []
