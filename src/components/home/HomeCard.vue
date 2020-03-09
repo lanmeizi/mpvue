@@ -52,10 +52,10 @@ export default {
   },
   computed: { // 请求时异步的
     avater() {
-      return this.data && this.data.userInfo && this.data.userInfo.avater
+      return (this.data && this.data.userInfo && this.data.userInfo.avater) || ''
     },
     nickname() {
-      return this.data && this.data.userInfo && this.data.userInfo.nickname
+      return (this.data && this.data.userInfo && this.data.userInfo.nickname) || ''
     },
     bookList() {
       return (this.data && this.data.bookList) || []

@@ -48,6 +48,12 @@
     },
     watch: {
       src(newValue, preValue) {
+        if (newValue && newValue.length > 0 && newValue !== preValue) {
+          this.$nextTick(() => {
+            this.isLoading = true
+            this.error = false
+          })
+        }
       }
     },
     data() {

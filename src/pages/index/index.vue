@@ -1,76 +1,79 @@
 <template>
-  <div id="index">
-    <SearchBar
-      :disabled="true"
-      @onClick="onSearchBarkClick"
-      :hot-search="hotSearch"
-    />
-    <HomeCard :data="homeCard" />
-    <HomeBanner
-      img="http://img5.imgtn.bdimg.com/it/u=3163535228,1008947289&fm=26&gp=0.jpg"
-      title="mpvue2.0实战多端小程序练习学习课程"
-      subTitle="立即体验"
-      @onClick="onBannerClick"
-    />
-    <div class="homeBook">
-      <HomeBook
-        title="为你推荐"
-        :row="1"
-        :col="3"
-        :data="recommend"
-        mode="col"
-        btn-text="换一批"
-        @onMoreClick="onBookMoreClick"
-        @onBookClick="onHomeBookClick"
+  <div>
+    <div id="index" v-if="isAuth">
+      <SearchBar
+        :disabled="true"
+        @onClick="onSearchBarkClick"
+        :hot-search="hotSearch"
       />
-    </div>
-    <div class="homeBook">
-      <HomeBook
-        title="免费阅读"
-        :row="2"
-        :col="2"
-        :data="hotBook"
-        mode="col"
-        btn-text="换一批"
-        @onMoreClick="onBookMoreClick"
-        @onBookClick="onHomeBookClick"
+      <HomeCard :data="homeCard" />
+      <HomeBanner
+        img="http://img5.imgtn.bdimg.com/it/u=3163535228,1008947289&fm=26&gp=0.jpg"
+        title="mpvue2.0实战多端小程序练习学习课程"
+        subTitle="立即体验"
+        @onClick="onBannerClick"
       />
+      <div class="homeBook">
+        <HomeBook
+          title="为你推荐"
+          :row="1"
+          :col="3"
+          :data="recommend"
+          mode="col"
+          btn-text="换一批"
+          @onMoreClick="recommendChange('recommend')"
+          @onBookClick="onHomeBookClick"
+        />
+      </div>
+      <div class="homeBook">
+        <HomeBook
+          title="免费阅读"
+          :row="2"
+          :col="2"
+          :data="freeRead"
+          mode="row"
+          btn-text="换一批"
+          @onMoreClick="recommendChange('freeRead')"
+          @onBookClick="onHomeBookClick"
+        />
+      </div>
+      <div class="homeBook">
+        <HomeBook
+          title="当前最热"
+          :row="1"
+          :col="4"
+          :data="hotBook"
+          mode="col"
+          btn-text="换一批"
+          @onMoreClick="recommendChange('hotBook')"
+          @onBookClick="onHomeBookClick"
+        />
+      </div>
+      <div class="homeBook">
+        <HomeBook
+          title="分类"
+          :row="3"
+          :col="2"
+          :data="category"
+          mode="category"
+          btn-text="查看全部"
+          @onMoreClick="onCategoryMoreClick"
+          @onBookClick="onHomeBookClick"
+        />
+      </div>
+      <!-- <ImageView
+        src="http://pics.sc.chinaz.com/files/pic/pic9/202001/hpic1978.jpg"
+        round  圆形图片
+        height="300px"
+        mode="scarleToFill"
+      /> -->
+      <!-- <ImageView
+        src="http://pics.sc.chinaz.com/files/pic/pic9/202001/hpic1978.jpg"
+        height="300px"  自定义图片高度
+        mode="scarleToFill"
+      /> -->
     </div>
-    <div class="homeBook">
-      <HomeBook
-        title="当前最热"
-        :row="1"
-        :col="4"
-        :data="freeRead"
-        mode="col"
-        btn-text="换一批"
-        @onMoreClick="onBookMoreClick"
-        @onBookClick="onHomeBookClick"
-      />
-    </div>
-    <div class="homeBook">
-      <HomeBook
-        title="分类"
-        :row="3"
-        :col="2"
-        :data="category"
-        mode="category"
-        btn-text="查看全部"
-        @onMoreClick="onBookMoreClick"
-        @onBookClick="onHomeBookClick"
-      />
-    </div>
-    <!-- <ImageView
-      src="http://pics.sc.chinaz.com/files/pic/pic9/202001/hpic1978.jpg"
-      round  圆形图片
-      height="300px"
-      mode="scarleToFill"
-    /> -->
-    <!-- <ImageView
-      src="http://pics.sc.chinaz.com/files/pic/pic9/202001/hpic1978.jpg"
-      height="300px"  自定义图片高度
-      mode="scarleToFill"
-    /> -->
+    <Auth  v-if="!isAuth" @getUserInfo="init" />
   </div>
 </template>
 
@@ -79,7 +82,9 @@ import SearchBar from '../../components/home/SearchBar'
 import HomeCard from '../../components/home/HomeCard'
 import HomeBanner from '../../components/home/HomeBanner'
 import HomeBook from '../../components/home/HomeBook'
-import { getHomeData } from '../../api'
+import Auth from '../../components/base/Auth'
+import { getHomeData, recommend, freeRead, hotBook } from '../../api'
+import { getSetting, getUserInfo, setStorageSync, getStorageSync, getUserOpenId } from '../../api/wechat'
 export default {
   data() {
     return {
@@ -89,19 +94,45 @@ export default {
       freeRead: [],
       hotBook: [],
       category: [],
-      homeCard: {}
+      homeCard: {},
+      isAuth: true
     }
   },
   components: {
     SearchBar,
     HomeCard,
     HomeBanner,
-    HomeBook
+    HomeBook,
+    Auth
   },
   mounted() {
-    this.getHomeData()
+    this.init()
   },
   methods: {
+    init() {
+      this.getSetting()
+    },
+    recommendChange(key) {
+      switch (key) {
+        case 'recommend':
+          recommend().then(response => {
+            this.recommend = response.data.data
+          })
+          break
+        case 'freeRead':
+          freeRead().then(response => {
+            this.freeRead = response.data.data
+          })
+          break
+        case 'hotBook':
+          hotBook().then(response => {
+            this.hotBook = response.data.data
+          })
+          break
+      }
+    },
+    onCategoryMoreClick() {
+    },
     getHomeData() {
       getHomeData({ openId: '1234' }).then(response => {
         const {
@@ -132,8 +163,6 @@ export default {
             nickname: '米老鼠'
           }
         }
-      }).catch(err => {
-        console.log('捕获异常', err)
       })
     },
     onSearchBarkClick() {
@@ -147,10 +176,35 @@ export default {
     },
     onHomeBookClick() {
       console.log('点击图书')
+    },
+    getUserInfo(e) {
+      getUserInfo(
+        (userInfo) => {
+          setStorageSync('userInfo', userInfo)
+          const openId = getStorageSync('openId')
+          if (!openId || openId.length === 0) {
+            getUserOpenId()
+          } else {
+            console.log('已获得openId')
+          }
+        },
+        () => {
+          console.log('failed...') // 获取用户信息,抛出异常
+        }
+      )
+    },
+    getSetting() { // 判断小程序是否获得权限
+      getSetting(
+        'userInfo',
+        () => {
+          this.isAuth = true
+          this.getUserInfo()
+        },
+        () => {
+          this.isAuth = false
+        }
+      )
     }
-  },
-  created() {
-    // let app = getApp()
   }
 }
 </script>
