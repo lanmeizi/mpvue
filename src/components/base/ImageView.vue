@@ -1,5 +1,5 @@
 <template>
-  <div id="image-view" @click="onClick">
+  <div id="image-view" @click="onClick" :style="{ height }">
     <img
       :class="round ? 'round image' : 'image'"
       :style="{ height }"

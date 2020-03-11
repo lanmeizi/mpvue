@@ -3,7 +3,11 @@
     <div class="home-card-inner">
       <div class="user-info">
         <div class="avatar-wrapper">
-          <ImageView :src="avater" round />
+          <ImageView :src="avater"
+          round
+          height="100%"
+          mode="scaleToFill"
+        />
         </div>
         <div class="nickname">{{ nickname }}</div>
         <div class="shelf-text">书架共有{{ data.num }}本好书</div>
@@ -52,10 +56,10 @@ export default {
   },
   computed: { // 请求时异步的
     avater() {
-      return (this.data && this.data.userInfo && this.data.userInfo.avater) || ''
+      return (this.data && this.data.userInfo && this.data.userInfo.avatarUrl) || ''
     },
     nickname() {
-      return (this.data && this.data.userInfo && this.data.userInfo.nickname) || ''
+      return (this.data && this.data.userInfo && this.data.userInfo.nickName) || ''
     },
     bookList() {
       return (this.data && this.data.bookList) || []

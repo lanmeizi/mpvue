@@ -4,7 +4,6 @@ export function getSetting(auth, onSuccess, onFail) {
   // getSetting判断小程序是否获得权限
   mpvue.getSetting({
     success(res) {
-      console.log('res==>', res)
       if (res.authSetting[`scope.${auth}`]) {
         onSuccess(res)
       } else {
@@ -20,7 +19,6 @@ export function getSetting(auth, onSuccess, onFail) {
 export function getUserInfo(onSuccess, onFail) {
   mpvue.getUserInfo({
     success(res) {
-      console.log('res==>', res)
       const { userInfo } = res
       if (userInfo) {
         onSuccess(userInfo)
@@ -62,4 +60,15 @@ export function getUserOpenId(callback) {
       console.log('res==>', res) // 直接抛出异常
     }
   })
+}
+
+export function showLoading(title) {
+  mpvue.showLoading({
+    title,
+    mask: true
+  })
+}
+
+export function hideLoading() {
+  mpvue.hideLoading()
 }

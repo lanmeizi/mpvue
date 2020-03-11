@@ -83,8 +83,16 @@ import HomeCard from '../../components/home/HomeCard'
 import HomeBanner from '../../components/home/HomeBanner'
 import HomeBook from '../../components/home/HomeBook'
 import Auth from '../../components/base/Auth'
-import { getHomeData, recommend, freeRead, hotBook } from '../../api'
-import { getSetting, getUserInfo, setStorageSync, getStorageSync, getUserOpenId } from '../../api/wechat'
+import { getHomeData, recommend, freeRead, hotBook, register } from '../../api'
+import {
+  getSetting,
+  getUserInfo,
+  setStorageSync,
+  getStorageSync,
+  getUserOpenId,
+  showLoading,
+  hideLoading
+} from '../../api/wechat'
 export default {
   data() {
     return {
@@ -133,8 +141,21 @@ export default {
     },
     onCategoryMoreClick() {
     },
-    getHomeData() {
-      getHomeData({ openId: '1234' }).then(response => {
+    onSearchBarkClick() {
+      // 跳转到搜索页面
+      this.$router.push('/pages/search/main')
+    },
+    onBannerClick() {
+      console.log('onBannerClick...')
+    },
+    onBookMoreClick() {
+      console.log('点击更多按钮')
+    },
+    onHomeBookClick() {
+      console.log('点击图书')
+    },
+    getHomeData(openId, userInfo) {
+      getHomeData({ openId }).then(response => {
         const {
           data: {
             hotSearch: {
@@ -158,34 +179,26 @@ export default {
         this.homeCard = {
           bookList: shelf,
           num: shelfCount,
-          userInfo: {
-            avater: 'http://img0.imgtn.bdimg.com/it/u=1972224372,2850391150&fm=26&gp=0.jpg',
-            nickname: '米老鼠'
-          }
+          userInfo
         }
+        hideLoading()
+      }).catch(() => {
+        hideLoading()
       })
     },
-    onSearchBarkClick() {
-      // 跳转到搜索页面
-    },
-    onBannerClick() {
-      console.log('onBannerClick...')
-    },
-    onBookMoreClick() {
-      console.log('点击更多按钮')
-    },
-    onHomeBookClick() {
-      console.log('点击图书')
-    },
     getUserInfo(e) {
+      const onOpenIdComplete = (openId, userInfo) => {
+        this.getHomeData(openId, userInfo)
+        register(openId, userInfo)
+      }
       getUserInfo(
         (userInfo) => {
           setStorageSync('userInfo', userInfo)
           const openId = getStorageSync('openId')
           if (!openId || openId.length === 0) {
-            getUserOpenId()
+            getUserOpenId(openId => onOpenIdComplete(openId, userInfo))
           } else {
-            console.log('已获得openId')
+            onOpenIdComplete(openId, userInfo)
           }
         },
         () => {
@@ -198,6 +211,7 @@ export default {
         'userInfo',
         () => {
           this.isAuth = true
+          showLoading('正在加载')
           this.getUserInfo()
         },
         () => {

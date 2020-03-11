@@ -6,6 +6,8 @@
           <ImageView
             src="http://img2.imgtn.bdimg.com/it/u=1633190730,3574775808&fm=26&gp=0.jpg"
             round
+            height="100%"
+            mode="scaleToFill"
           />
         </div>
         <div class="sub-title">登录小慕读书</div>
@@ -59,6 +61,7 @@
       margin-top: 22.5px;
       .auth-img {
         width: 74px;
+        height: 74px;
       }
       .sub-title {
         font-size: 13px;
